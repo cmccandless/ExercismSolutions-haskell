@@ -14,6 +14,6 @@ test-all:
 
 define dotest
 	cd $(1); \
-	stack test $(OPTS); \
+	stack test $(OPTS) || exit 1; \
 	cd ..;
 endef
