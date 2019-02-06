@@ -49,9 +49,5 @@ script:
     fi
  - |
     set -e
-    # Explicit set exercises' resolver only if it's not the current one.
-    if [ "${CURRENT}" != "YES" ]; then
-        export SET_RESOLVER="--resolver ${RESOLVER}"
-    fi
     make lint test-all
     

@@ -1,3 +1,4 @@
+{-# LANGUAGE TupleSections #-}
 module Frequency (frequency) where
 
 import Data.Char (isLetter, toLower)
