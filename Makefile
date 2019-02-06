@@ -19,4 +19,4 @@ test-fast: $(EXERCISES_FAST)
 test-slow: $(EXERCISES_SLOW)
 
 $(EXERCISES):
-	@cd $@ && (stack test $(OPTS) || exit 1)
+	@cd $@ && stack test $(OPTS)
