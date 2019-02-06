@@ -4,7 +4,7 @@ import Data.Maybe (fromJust)
 
 digit :: Integer -> String
 digit n = case n of
-    0  -> ""
+    -- 0  -> ""
     1  -> "one" 
     2  -> "two" 
     3  -> "three"

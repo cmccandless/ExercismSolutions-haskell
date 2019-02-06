@@ -1,6 +1,6 @@
 module Transpose (transpose) where
 
-import Data.List (zipWith)
+-- import Data.List (zipWith)
 
 padded :: ([String], [String]) -> ([String], [String])
 padded (left, right) = let diff = length left - length right

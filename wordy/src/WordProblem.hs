@@ -10,11 +10,14 @@ isInteger xs = all isDigit xs
 removeQ :: String -> String
 removeQ xs = if last xs == '?' then init xs else xs
 
+strToInt :: String -> Integer
+strToInt s = read s :: Integer
+
 answer :: String -> Maybe Integer
 answer = parse 0 . words
     where
         parse x [] = Just x
-        parse _ ("What":"is":y:ys) = parse (atoi y) ys
+        parse _ ("What":"is":y:ys) = parse (strToInt y) ys
         parse x (op:"by":y:ys) = parse x (op:y:ys)
         parse x (op:y:ys) 
             | not . isInteger $ removeQ y = Nothing

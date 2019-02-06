@@ -1,38 +1,20 @@
 module RunLength (decode, encode) where
 
 import Data.Char
-import Data.List
 
-str :: String -> String
-str g = c ++ take 1 g where
-    c = if length g > 1 then show (length g) else ""
-    
-expand :: Int -> Char -> Int
-expand n c = n * 10 + digitToInt c
-
-popped :: [a] -> [a]
-popped = drop 1
-
-rep :: Int -> Char -> String
-rep n = replicate (max n 1)
+strToInt :: String -> Int
+strToInt x = read x :: Int
 
 encode :: String -> String
-encode = encodeEx ""
-
-encodeEx :: String -> String-> String
-encodeEx partial text
-    | null text = partial
-    | otherwise = encodeEx (partial ++ str (fst g)) (snd g) where
-        h = head text
-        g = break (/=t) text
+encode "" = ""
+encode (x:xs) = let (left, right) = span (==x) (x:xs)
+                in case length left of
+    1 -> x : encode right
+    _ -> show (length left) ++ (x : encode right)
 
 decode :: String -> String
-decode = decodeEx "" 0
-
-decodeEx :: String -> Int -> String -> String
-decodeEx partial count text
-    | null text = partial
-    | isDigit h = decodeEx partial (expand count h) p
-    | otherwise = decodeEx (partial ++ rep count h) 0 p where 
-        h = head text
-        p = popped text
+decode "" = ""
+decode (x:xs)
+    | isDigit x = let (left, r:rs) = span isDigit xs
+                  in replicate (strToInt (x:left)) r ++ decode rs
+    | otherwise = x : decode xs

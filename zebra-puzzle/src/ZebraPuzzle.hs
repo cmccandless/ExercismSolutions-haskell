@@ -17,53 +17,58 @@ nextTo :: Int -> Int -> Bool
 nextTo a b = abs (a - b) == 1
 
 solve :: Solution
-solve = solveResidents perms
+solve = fromJust $ solveResidents perms
     where
-        solveResidents (p@[nor,eng,span,jap,ukr]:ps)
-            | nor /= 0 ||  -- Constraint 10
-              isNothing s = solveResidents ps
-            | otherwise = fromJust s
+        [first,second,middle,_,_] = [0..4]
+        solveResidents ([nor,eng,spani,jap,ukr]:prs)
+            | nor /= first = solveResidents prs  -- Constraint 10
+            | otherwise = let colors = solveColors perms
+                          in if isNothing colors
+                             then solveResidents prs
+                             else colors
             where
-                s = solveColors perms
-                solveColors [] = Nothing
-                solveColors ([green,red,blue,ivory,yellow]:ps)
-                    | eng /= red ||         -- Constraint 2
-                      green /= ivory + 1 || -- Constraint 6
-                      blue /= 2 ||          -- Constraint 10+15
-                      isNothing s = solveColors ps
-                    | otherwise = s
+                solveColors ([red,blue,green,ivory,yellow]:pcs)
+                    | eng /= red ||  -- Constraint 2
+                      green /= ivory + 1 ||  -- Constraint 6
+                      blue /= second = solveColors pcs  -- Constraint 15 + 10
+                    | otherwise = let smokes = solveSmokes perms
+                                  in if isNothing smokes
+                                     then solveColors pcs
+                                     else smokes
                     where
-                        s = solveSmokes perms
-                        solveSmokes [] = Nothing
-                        solveSmokes ([old,parl,kools,lucky,ches]:ps)
-                            | yellow /= kools || -- Constraint 8
-                              jap /= parl ||     -- Constraint 14
-                              isNothing s = solveSmokes ps
-                            | otherwise = s
+                        solveSmokes ([ches,kools,lucky,parl,old]:pss)
+                            | yellow /= kools ||  -- Constraint 8
+                              jap /= parl = solveSmokes pss  -- Constraint 14
+                            | otherwise = let drinks = solveDrinks perms
+                                          in if isNothing drinks
+                                             then solveSmokes pss
+                                             else drinks
                             where
-                                s = solveDrinks perms
-                                solveDrinks [] = Nothing
-                                solveDrinks ([water,oj,tea,milk,coffee]:ps)
-                                    | coffee /= green || -- Constraint 4
-                                      tea /= ukr ||      -- Constraint 5
-                                      milk /= 2 ||       -- Constraint 9
-                                      oj /= lucky ||     -- Constraint 13
-                                      isNothing s = solveDrinks ps
-                                    | otherwise = s
+                                solveDrinks ([coffee, milk, oj, tea, water]:pds)
+                                    | coffee /= green ||  -- Constraint 4
+                                      tea /= ukr ||  -- Constraint 5
+                                      milk /= middle || -- Constraint 9
+                                      oj /= lucky = solveDrinks pds  -- Constraint 13
+                                    | otherwise = let pets = solvePets perms
+                                                  in if isNothing pets
+                                                     then solveDrinks pds
+                                                     else pets
                                     where
-                                        s = solvePets perms
-                                        solvePets [] = Nothing
-                                        solvePets ([fox,dog,zebra,horse,snails]:ps)
-                                            | span /= dog ||                        -- Constraint 3
-                                              snails /= old ||                      -- Constraint 7
-                                              not (ches  `nextTo` fox) ||                 -- Constraint 11
-                                              not (kools `nextTo` horse) = solvePets ps  -- Constraint 12
+                                        solvePets ([dog,horse,fox,snails,zebra]:pps)
+                                            | spani /= dog ||  -- Constraint 3
+                                              snails /= old ||  -- Constraint 7
+                                              not (ches `nextTo` fox) ||  -- Constraint 11
+                                              not (kools `nextTo` horse) = solvePets pps  -- Constraint 12
                                             | otherwise = Just $ Solution (matchPerson water) (matchPerson zebra)
-                                                where 
-                                                    persons = [(eng,Englishman)
-                                                              ,(span,Spaniard)
-                                                              ,(ukr,Ukrainian)
-                                                              ,(nor,Norwegian)
-                                                              ,(jap,Japanese)
-                                                              ]
-                                                    matchPerson n = head [snd x | x <- persons, fst x == n]
+                                            where
+                                                persons = [(eng, Englishman)
+                                                        ,(nor, Norwegian)
+                                                        ,(jap, Japanese)
+                                                        ,(spani, Spaniard)
+                                                        ,(ukr, Ukrainian)]
+                                                matchPerson n = head [snd x | x <- persons, fst x == n]
+                                        solvePets _ = Nothing
+                                solveDrinks _ = Nothing
+                        solveSmokes _ = Nothing
+                solveColors _ = Nothing
+        solveResidents _ = Nothing
