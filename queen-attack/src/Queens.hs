@@ -2,8 +2,8 @@ module Queens (boardString, canAttack) where
 
 boardSquare :: Maybe (Int, Int) -> Maybe (Int, Int) -> Int -> Int -> String
 boardSquare w b y x 
-    | maybe False (==(y, x)) w = "W"
-    | maybe False (==(y, x)) b = "B"
+    | (== Just (y, x)) w = "W"
+    | (== Just (y, x)) b = "B"
     | otherwise           = "_"
     
 boardRow :: Maybe (Int, Int) -> Maybe (Int, Int) -> Int -> String

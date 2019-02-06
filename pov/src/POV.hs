@@ -25,6 +25,6 @@ tracePathBetween from to tree = case (fromPOV from tree, from == to) of
     (_, True)                     -> Just [to]
     (Just (Node _ fromForest), _) -> 
         case getBranchWith to fromForest of
-            Nothing                         -> Nothing
-            Just (newTree@(Node newRoot _)) -> 
+            Nothing                       -> Nothing
+            Just newTree@(Node newRoot _) -> 
                (from :) <$> tracePathBetween newRoot to newTree
